@@ -13,6 +13,12 @@ ON Employee_Details.Desig_Id = Designation.Desig_Id;
 
 2. Select state name and country name and sort the records in ascending order with state name.
 
+//work in progress
+SELECT State.State_Name, Country.Country_Name
+FROM STATE
+INNER JOIN COUNTRY
+ON State.Country_Id = Country.Country_Id;
+
 3. Select first 3 records from country table in ascending order by country name.
 
 4. Select all employees whose first name starts with letter “a”.
