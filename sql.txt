@@ -1,0 +1,113 @@
+CREATE DATABASE Employee_SimonTemple;
+GO
+
+USE Employee_SimonTemple;
+GO
+
+CREATE TABLE Country(
+	Country_Id int identity(1,1) PRIMARY KEY,
+	Country_Name nvarchar(50) NOT NULL UNIQUE
+);
+GO
+
+CREATE TABLE State(
+	State_Id int identity(1,1) PRIMARY KEY,
+	Country_Id int NOT NULL,
+	State_Name nvarchar(50) NOT NULL,
+	Constraint Fk_Country_Id FOREIGN KEY (Country_Id) REFERENCES Country(Country_Id)
+);
+GO
+
+CREATE TABLE City(
+	City_Id int identity(1,1) PRIMARY KEY,
+	State_Id int NOT NULL,
+	City_Name nvarchar(50) NOT NULL
+	CONSTRAINT Fk_State_Id FOREIGN KEY (State_Id) REFERENCES State(State_Id)
+);
+GO
+
+CREATE TABLE Designation(
+	Desig_Id int identity(1,1) PRIMARY KEY,
+	Desig_Name nvarchar(50) NOT NULL UNIQUE,
+	Desig_Description nvarchar(300)
+);
+GO
+
+CREATE TABLE Employee_Details(
+	Emp_Id int identity(1,1) PRIMARY KEY,
+	Emp_First_Name nvarchar(50) NOT NULL,
+	Emp_Middle_Name nvarchar(50),
+	Emp_Last_Name nvarchar(50) NOT NULL,
+	Emp_Address1 nvarchar(300) NOT NULL,
+	Emp_Address2 nvarchar(300) NOT NULL,
+	Emp_Country_Id int NOT NULL,
+	Emp_State_Id int NOT NULL,
+	Emp_City_Id int NOT NULL,
+	Emp_Zip int NOT NULL,
+	Emp_Mobile bigint NOT NULL,
+	Emp_Gender bit NOT NULL,
+	Desig_Id int NOT NULL,
+	Emp_DOB datetime NOT NULL,
+	Emp_JoinDate datetime NOT NULL,
+	Emp_Active bit NOT NULL,
+	CONSTRAINT Fk_Emp_Country_Id FOREIGN KEY (Emp_Country_Id) REFERENCES Country(Country_Id),
+	CONSTRAINT Fk_Emp_State_Id FOREIGN KEY (Emp_State_Id) REFERENCES State(State_Id),
+	CONSTRAINT Fk_Emp_City_Id FOREIGN KEY (Emp_City_Id) REFERENCES City(City_Id),
+);
+GO
+
+CREATE TABLE Salary(
+	Salary_Id int identity(1,1) PRIMARY KEY,
+	Emp_Id int NOT NULL,
+	Emp_Salary_Year_Change datetime NOT NULL,
+	Emp_Salary decimal NOT NULL
+	CONSTRAINT Fk_Emp_Id FOREIGN KEY (Emp_Id) REFERENCES Employee_Details(Emp_Id)
+);
+GO
+
+CREATE TABLE Employee_Doccuments(
+	Emp_Doc_Id int identity(1,1) PRIMARY KEY,
+	Emp_Id int NOT NULL,
+	Emp_Doc_Name nvarchar(50) NOT NULL,
+	Emp_Doc_Desc nvarchar(150),
+	CONSTRAINT Fk_Emp_Doc_Emp_Id FOREIGN KEY (Emp_Id) REFERENCES Employee_Details(Emp_Id)
+);
+GO
+
+INSERT INTO Country ( Country_Name ) VALUES
+('Afghanistan'),('Albania'),('Algeria'),('Andorra'),('Australia'),('Austria'),('Brazil'),('Bangladesh'),('China'),('Chile'),('Denmark'),('Egypt'),('Ethiopia'),('France'),('Finland'),('Germany'),('Georgia'),('Greece'),('Hong Kong'),('Hungary'),('India'),('Ireland'),('Japan'),('Kuwait'),('Kenya'),('Luxembourg'),('Mexico'),('Nepal'),('Oman'),('Poland'),('Qatar'),('Russia'),('South Africa'),('Switzerland'),('Syria'),('Thailand'),('United States'),('Uganda'),('Vietnam'),('Yemen'),('Zimbabwe');
+GO
+
+INSERT INTO State ( Country_Id, State_Name ) VALUES
+(1,'Badakhshan'),(1,'Badghis'),(1, 'Baghlan'),(2,'Berat'),(2,'Diber'),(2, 'Durres'),(3, 'Adrar'),(3, 'Blida'),(3, 'Tipaza'),(4, 'Canillo'),(4, 'Ordino'),(5, 'Tasmania'),(5, 'Victoria'),(6, 'Burgenland'),(6, 'Tirol'),(7, 'Bahia'),(7, 'Roraima'),(8, 'Dhaka'),(9, 'Jilin'),(10, 'Atacama'),(11, 'Capital'),(12,'Suhaj'),(13,'Tigray'),(14,'Auvergne'),(15,'South Savo'),(16,'Bremen'),(17,'Ajaria'),(18,'Crete'),(19,'Eastern District'),(20,'BaranyaMegye'),(21,'Kerala'),(22,'Cavan'),(23,'Akita'),(24,'Hawalli'),(25,'Central'),(26,'Diekirch'),(27,'Colima'),(28,'Eastern'),(29,'Dhofar'),(30,'Lodzkie'),(31,'Al Khawr'),(32,'Altay'),(33,'Free State'),(34,'Bern'),(35,'Idlib'),(36,'Chai Nat'),(37,'Alaska'),(37,'Texas'),(37,'New York'),(37,'California'),(38,'Abim'),(39,'Bac Can'),(40,'Ataq'),(41,'Bulawayo'),(37,'Oregon'),(37,'New Jersey');
+GO
+
+INSERT INTO City ( State_Id, City_Name ) VALUES (1, 'Jurm'),(2, 'Abbakhsh'),(3, 'Baglan'),(4, 'Berat'),(5, 'Burrel'),(6, 'Durres'),(7, 'Algiers'),(8, 'Amsthas'),(9, 'Aboucha'),(10, 'Canillo'),(11, 'Ordino'),(12, 'Hobart'),(13, 'Melbourne'),(14, 'Eisenstadt'),(47, 'Anchorage'),(47, 'Fairbanks'),(47, 'College'),(47, 'Kodiak'),(47, 'Meadow Lakes'),(48, 'Houston'),(48, 'Dallas'),(48, 'Austin'),(48, 'Fort Worth'),(49, 'New York'),(49, 'Buffalo'),(49, 'Rochester'),(49, 'Syracuse'),(49, 'Albany'),(50, 'Los Angeles'),(50, 'San Diego'),(50, 'San Francisco'),(50, 'Oakland'),(50, 'Sacremento'),(56, 'Newark');
+GO
+
+INSERT INTO Designation (Desig_Name, Desig_Description) VALUES ('Project Manager','Project Manager'), ('Software Developer','Software Developer'), ('Team Leader','Team Leader'), ('Business Analyst','Business Analyst'), ('Design Engineer','Design Engineer'), ('Tech Lead','Tech Lead');
+GO
+
+BULK INSERT Employee_SimonTemple.dbo.Employee_Details
+FROM 'C:\Users\Simon\Desktop\Employee_Details.txt'
+WITH
+  (
+	CODEPAGE = 'OEM',
+    DATAFILETYPE = 'char',
+    FIELDTERMINATOR = '\t',
+    ROWTERMINATOR = '\n',
+		FIRSTROW = 2
+  );
+GO
+
+BULK INSERT Employee_SimonTemple.dbo.Salary
+FROM 'C:\Users\Simon\Desktop\Salary.txt'
+WITH
+  (
+	CODEPAGE = 'OEM',
+    DATAFILETYPE = 'char',
+    FIELDTERMINATOR = '\t',
+    ROWTERMINATOR = '\n',
+		FIRSTROW = 2
+  );
+GO
