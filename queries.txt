@@ -1,0 +1,10 @@
+SELECT Employee_Details.Emp_First_Name, Employee_Details.Emp_Middle_Name, Employee_Details.Emp_Last_Name, Country.Country_Name, State.State_Name, City.City_Name, Employee_Details.Emp_Mobile, Designation.Desig_Name
+FROM Employee_Details
+INNER JOIN Country
+ON Employee_Details.Emp_Country_Id = Country.Country_Id
+INNER JOIN State
+ON Employee_Details.Emp_State_Id = State.Country_Id
+INNER JOIN City
+ON Employee_Details.Emp_City_Id = City.State_Id
+INNER JOIN Designation
+ON Employee_Details.Desig_Id = Designation.Desig_Id;
