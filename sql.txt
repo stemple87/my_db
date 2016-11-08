@@ -96,7 +96,8 @@ WITH
     DATAFILETYPE = 'char',
     FIELDTERMINATOR = '\t',
     ROWTERMINATOR = '\n',
-		FIRSTROW = 2
+		FIRSTROW = 2,
+		KEEPNULLS
   );
 GO
 
@@ -108,6 +109,7 @@ WITH
     DATAFILETYPE = 'char',
     FIELDTERMINATOR = '\t',
     ROWTERMINATOR = '\n',
-		FIRSTROW = 2
+		FIRSTROW = 2,
+		KEEPNULLS
   );
 GO

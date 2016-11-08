@@ -1,5 +1,7 @@
 1. Select First name, Last name, Address, Country Name (by joining with country table), Sate Name (by joining with state table), City Name (by joining with city table),Mobile, and Designation name (by joining with designation table) of all employees .
 
+CREATE PROCEDURE usp_Emp_Info
+AS
 SELECT Employee_Details.Emp_First_Name, Employee_Details.Emp_Middle_Name, Employee_Details.Emp_Last_Name, Country.Country_Name, State.State_Name, City.City_Name, Employee_Details.Emp_Mobile, Designation.Desig_Name
 FROM Employee_Details
 INNER JOIN Country
@@ -10,99 +12,360 @@ INNER JOIN City
 ON Employee_Details.Emp_City_Id = City.City_Id
 INNER JOIN Designation
 ON Employee_Details.Desig_Id = Designation.Desig_Id;
+GO
 
 2. Select state name and country name and sort the records in ascending order with state name.
 
-//work in progress
+CREATE PROCEDURE usp_Sort_State
+AS
 SELECT State.State_Name, Country.Country_Name
 FROM STATE
 INNER JOIN COUNTRY
-ON State.Country_Id = Country.Country_Id;
+ON State.Country_Id = Country.Country_Id
+ORDER BY State.State_Name;
+GO
 
 3. Select first 3 records from country table in ascending order by country name.
 
+CREATE PROCEDURE usp_Sort_Top_Three_Countries
+AS
+SELECT TOP 3 Country.Country_Name
+FROM Country
+ORDER BY Country.Country_Name;
+GO
+
 4. Select all employees whose first name starts with letter “a”.
+
+CREATE PROCEDURE usp_Select_Users_By_First_Char
+AS
+SELECT * FROM Employee_Details WHERE Emp_First_Name LIKE 'a%';
+GO
 
 5. Select all employees whose first name ends with letter “a”
 
+CREATE PROCEDURE usp_Select_Users_By_Last_Char
+AS
+SELECT * FROM Employee_Details WHERE Emp_First_Name LIKE '%a';
+GO
+
 6. Select all employees who are inactive.
+
+CREATE PROCEDURE usp_Select_Users_By_Active
+AS
+SELECT * FROM Employee_Details WHERE Emp_Active = 1;
+GO
 
 7. Select first name, last name, middle name of all employees and change the column names to First Name, Last Name, and Middle Name.
 
+CREATE PROCEDURE
+AS
+SELECT Employee_Details.Emp_First_Name AS [first name], Employee_Details.Emp_Middle_Name AS [middle name], Employee_Details.Emp_Last_Name AS [last name]
+FROM Employee_Details
+GO
+
 8. Print total number of employees.
+
+CREATE PROCEDURE usp_Print_Number
+AS
+DECLARE @Count varchar(50);
+SELECT @Count = COUNT(Emp_First_Name) FROM Employee_Details;
+PRINT 'The number of employees is ' + @Count + '.';
+GO
 
 9. Print total number of employees whose middle name is not null.
 
+CREATE PROCEDURE usp_Not_Null_Middle_Name
+AS
+DECLARE @Count varchar(50);
+SELECT @Count = COUNT(Emp_Middle_Name) FROM Employee_Details WHERE Emp_Middle_Name IS NOT NULL;
+PRINT 'The number of employees with a not null middle name is ' + @Count + '.';
+GO
+
 10. Select first name, last name, middle name of all employees. If middle name is null change that value to “Not Applicable”.
+
+CREATE PROCEDURE usp_Null_Middle_Name_Change
+AS
+SELECT Emp_First_Name, CASE WHEN Emp_Middle_Name IS NULL THEN 'NOT AVAILABLE' ELSE Emp_Middle_Name END as Emp_Middle_Name, Emp_Last_Name FROM Employee_Details;
+GO
 
 11. Concatenate first name, middle name, last name of all records in employee table and print.
 
+CREATE PROCEDURE usp_Concat_Names_Table
+AS
+SELECT Emp_First_Name + ' ' + CASE WHEN Emp_Middle_Name IS NULL THEN '' ELSE Emp_Middle_Name END + ' ' Emp_Last_Name as Name FROM Employee_Details;
+GO
+
 12. Select all records in employee table and order in ascending direction with country name.
+
+CREATE PROCEDURE usp_Select_All_Order_By_Country
+AS
+SELECT *
+FROM Employee_Details
+INNER JOIN Country
+ON Employee_Details.Emp_Country_Id = Country.Country_Id
+ORDER BY Country.Country_Name;
+GO
 
 13. Retrieve first 10 records from employee table and order by their first name in ascending direction.
 
-14. Select all record from employee who lives in the cities àDallas, Algiers.
+CREATE PROCEDURE usp_Order_By_First_Name
+AS
+SELECT TOP 10 *
+FROM Employee_Details
+ORDER BY Emp_First_Name;
+GO
 
-15. Select all employees who lives in the cities that starts with the letter s between A and D.
+14. Select all record from employee who lives in the cities Dallas, Algiers.
+
+CREATE PROCEDURE usp_Search_By_Specific_City
+AS
+SELECT TOP 10 *
+FROM Employee_Details
+INNER JOIN City
+ON Employee_Details.Emp_City_Id = City.City_Id
+WHERE City.City_Name = 'Dallas' OR City.City_Name = 'Algiers';
+GO
+
+15. Select all employees who lives in the cities that starts with the letter between A and D.
+
+CREATE PROCEDURE usp_Serch_Between_Alpha_Paramaerts
+AS
+SELECT TOP 10 *
+FROM Employee_Details
+INNER JOIN City
+ON Employee_Details.Emp_City_Id = City.City_Id
+WHERE City.City_Name >= 'A' and City.City_Name < 'E';
+GO
 
 16. Fetch First name, last name, middle name, Country name, Designation name and DOB within a range (e.g.: 1/2/1984 to 1/3/1986).
 
+CREATE PROCEDURE usp_Serch_Between_Dates
+AS
+SELECT Employee_Details.Emp_First_Name, Employee_Details.Emp_Last_Name, Employee_Details.Emp_Middle_Name, Country.Country_Name, Designation.Desig_Name, Employee_Details.Emp_DOB
+FROM Employee_Details
+INNER JOIN Country
+ON Employee_Details.Emp_Country_Id = Country.Country_Id
+INNER JOIN Designation
+ON Employee_Details.Desig_Id = Designation.Desig_Id
+WHERE Employee_Details.Emp_DOB BETWEEN '01/02/1984 00:00:00.000' AND '01/03/1986 00:00:00.000';
+GO
+
 17. Fetch First name, Last name, middle name, Country name, Designation name and highest salary.
+
+CREATE PROCEDURE usp_Get_Highest_Salary
+AS
+SELECT Employee_Details.Emp_First_Name, Employee_Details.Emp_Last_Name, Employee_Details.Emp_Middle_Name, Country.Country_Name, Designation.Desig_Name, MAX(Salary.Emp_Salary)
+FROM Employee_Details
+INNER JOIN Country
+ON Employee_Details.Emp_Country_Id = Country.Country_Id
+INNER JOIN Designation
+ON Employee_Details.Desig_Id = Designation.Desig_Id
+INNER JOIN
+Salary
+ON Employee_Details.Emp_Id = Salary.Emp_Id
+GROUP BY Employee_Details.Emp_First_Name, Employee_Details.Emp_Last_Name, Employee_Details.Emp_Middle_Name, Country.Country_Name, Designation.Desig_Name;
+GO
+
 
 18. Fetch First name, Last name, middle name, Country name, Designation name and his current salary.
 
+CREATE PROCEDURE usp_Get_Current_Salary
+AS
+SELECT ED.Emp_First_Name, ED.Emp_Last_Name, ED.Emp_Middle_Name, C.Country_Name, D.Desig_Name, S.Emp_Salary AS MONEY
+FROM Employee_Details AS ED
+INNER JOIN Country AS C
+ON ED.Emp_Country_Id = C.Country_Id
+INNER JOIN Designation AS D
+ON ED.Desig_Id = D.Desig_Id
+INNER JOIN
+Salary AS S
+ON ED.Emp_Id = S.Emp_Id
+WHERE S.Emp_Salary_Year_Change = (
+	Select MAX(Emp_Salary_Year_Change) FROM Salary AS x
+	WHERE S.Emp_Id = X.Emp_Id
+);
+GO
+
 19. Fetch First name, Last name, middle name, Country name, Designation name and his/her highest salary within a range (e.g. : 50000 to 100000).
+
+CREATE PROCEDURE usp_Get_Salary_Between_Range;
+AS
+SELECT ED.Emp_First_Name, ED.Emp_Last_Name, ED.Emp_Middle_Name, C.Country_Name, D.Desig_Name, S.Emp_Salary AS MONEY
+FROM Employee_Details AS ED
+INNER JOIN Country AS C
+ON ED.Emp_Country_Id = C.Country_Id
+INNER JOIN Designation AS D
+ON ED.Desig_Id = D.Desig_Id
+INNER JOIN
+Salary AS S
+ON ED.Emp_Id = S.Emp_Id
+WHERE S.Emp_Salary_Year_Change = (
+	Select MAX(Emp_Salary_Year_Change) FROM Salary AS x
+	WHERE (S.Emp_Id = X.Emp_Id) AND (X.Emp_Salary >= 50000 and X.Emp_Salary <= 100000)
+);
+GO
 
 20. Select first 3 characters of EMP_FIRST_NAME from EMPLOYEE_DETAILS -- SUBSTRING(COLUMN_NAME,1,3)
 
+CREATE PROCEDURE usp_Get_First_Three_Chars
+AS
+SELECT SUBSTRING(Emp_First_Name, 1, 3) FROM Employee_Details;
+GO
+
 21. If there is any letter “A” in Emp_First_Name, replace “A” with “$”.
 
-a. E.g. Francis à Fr$ncis
+CREATE PROCEDURE usp_Replace_Char
+AS
+SELECT REPLACE(Emp_First_Name, 'A', '$') FROM Employee_Details;
+GO
 
 22. Select EMP_FIRST_NAME ,Joined year, Joined Month name and joined day from
-
 Employee details table.
 
-E.g.: First Name Year Moth Day
+CREATE PROCEDURE usp_Format_Date
+AS
+SELECT Emp_First_Name, YEAR(Emp_JoinDate) AS Year, DateName(month, DateAdd(month, MONTH(Emp_JoinDate), 0) - 1) AS Month, DAY(Emp_JoinDate) AS Day
+FROM Employee_Details;
+GO
 
-Ayodeji 2014 Jan 5
 
 23. Get employee details from employee details table whose joining year is “2014”.
 
+CREATE PROCEDURE usp_Get_Details_By_Join_Year
+AS
+SELECT * FROM Employee_Details
+WHERE YEAR(Emp_JoinDate) = 2014;
+GO
+
 24. Get employee details from employee table who joined before January 1st 2014
 
+CREATE PROCEDURE usp_Get_Details_By_Date
+AS
+SELECT * FROM Employee_Details
+WHERE Emp_JoinDate > '2014/01/01 00:00:00:000';
+GO
+
 25. Get Designation, total salary spend by the company with respect to each E.g.
-
 Designation Name Total Salary
-
 Mobile Software Engineer 622100.00
 
 26. Get designation name, no of employees in a designation with respect to a designation from employee details table.
 
+CREATE PROCEDURE usp_Select_Employees_In_Designation
+AS
+SELECT Desig_Name, (SELECT Count(Desig_Id) FROM Employee_Details AS X WHERE X.Desig_Id = D.Desig_Id) AS CountNo
+FROM Designation AS D
+INNER JOIN Employee_Details AS ED
+ON ED.Desig_Id = D.Desig_Id;
+GO
+
+
 27. Get designation wise average salaries from employee details table and order by Salary ascending.
 
+CREATE PROCEDURE usp_Select_Desig_Avg_Salary
+AS
+SELECT Desig_Name, (SELECT AVG(X.Emp_Salary) FROM Salary AS X WHERE (X.Salary_Id = Ed.Emp_Id) And (ED.Desig_Id = D.Desig_Id)) AS AvgSalary
+FROM Designation AS D
+INNER JOIN Employee_Details AS ED
+ON ED.Desig_Id = D.Desig_Id;
+GO
+
 28. Select no of employees joined with respect to year and month from
-
 Employee details table.
-
 e.g.:
-
 Joined Year Joined Month Number of employees
-
 2013 1 2
+
+CREATE PROCEDURE usp_Count_Year_Month
+AS
+SELECT YEAR(Emp_JoinDate) AS Year,
+SUM(CASE WHEN YEAR(Emp_JoinDate) = 2009 THEN 1 ELSE 0 END) AS [Year Count],
+SUM(CASE WHEN MONTH(Emp_JoinDate) = 1 THEN 1 ELSE 0 END) AS [Month Count]
+FROM Employee_Details AS ED
+GROUP BY ED.Emp_JoinDate
+GO
 
 29. Select employee from employee details table whose salary is not yet in the salary table.
 
-30. Select first name, sum of salary from employee details and salary table for all employees even if they didn't get salary and set salary amount as 0 for those employees who didn't get salary.
+CREATE PROCEDURE usp_Check_No_Salary
+AS
+Select Emp_First_Name, Salary.Emp_Salary AS [No Salary Yet] From Employee_Details AS ED
+LEFT OUTER JOIN Salary
+ON ED.Emp_Id = Salary.Emp_Id
+WHERE Salary.Emp_Salary IS NULL;
+GO
 
+30. Select first name, sum of salary from employee details and salary table for all employees even if they didn't get salary and set salary amount as 0 for those employees who didn't get salary.
 Hint: use left outer join
+
+CREATE PROCEDURE usp_Sum_Salary_Replace_No_Salary
+AS
+Select Emp_First_Name, SUM(ISNULL(Salary.Emp_Salary, 0)) AS [Emp Sum] From Employee_Details AS ED
+LEFT OUTER JOIN Salary
+ON ED.Emp_Id = Salary.Emp_Id
+GROUP BY Emp_First_Name
+GO
 
 31. Select 10 % of current salary from Employee1, 20% of Employee1, 15% of Employee3 and for others 30 % of salary from employee table.
 
+CREATE PROCEDURE usp_Emp_Percent_Pay
+Select Emp_First_Name,
+(AVG(CASE WHEN ED.Emp_Id = 1 THEN 10 END)) AS [1st],
+(AVG(CASE WHEN ED.Emp_Id = 2 THEN 20 END)) AS [2nd],
+(AVG(CASE WHEN ED.Emp_Id = 3 THEN 15 END)) AS [3rd],
+(AVG(CASE WHEN ED.Emp_Id > 3 THEN 30 END)) AS [EVERYONE ELSE]
+From Employee_Details AS ED
+INNER JOIN Salary AS S
+ON ED.Emp_Id = S.Emp_Id
+GROUP BY
+Emp_First_Name
+GO
+
 32. Display how many days each employee worked in the company.
+CREATE PROCEDURE usp_Day_Amount
+AS
+Select Emp_First_Name, DATEDIFF(day, Emp_JoinDate, GetDate())FROM Employee_Details
+GO
 
 33. Select the employee with highest appraisal. (difference of first salary and current salary)
 
+CREATE PROCEDURE usp_Highest_Pay_Difference
+AS
+Select Top 1 ED.Emp_First_Name,
+MAX(S.Emp_Salary) - MIN(S.Emp_Salary) AS [Pay Difference]
+FROM Employee_Details AS ED
+INNER JOIN Salary AS S
+ON ED.Emp_Id = S.Emp_Id
+GROUP BY
+ED.Emp_First_Name
+ORDER BY [Pay Difference] DESC;
+GO
+
 34. Select the employees who have the third highest current salary.
 
+Select Top 3
+MAX(S.Emp_Salary) - MIN(S.Emp_Salary) AS [Pay Difference], ED.Emp_First_Name
+FROM Employee_Details AS ED
+INNER JOIN Salary AS S
+ON ED.Emp_Id = S.Emp_Id
+WHERE S.Emp_Salary = (Select TOP 1 X.Emp_Salary FROM Salary as X Where X.Emp_Id = ED.Emp_Id ORDER BY Emp_Salary)
+GROUP BY
+ED.Emp_First_Name, S.Emp_Salary
+ORDER BY [Pay Difference] DESC
+
 35. Display employee name, and average salary with the help of a user defined function.
+
+CREATE FUNCTION NameAveragePay2
+(
+	@p_Emp_Id INT
+) RETURNS TABLE
+AS
+	RETURN
+	Select Emp_First_Name, Salary.Emp_Salary FROM Employee_Details
+	INNER JOIN Salary
+	ON Employee_Details.Emp_Id = Salary.Salary_Id
+	WHERE Employee_Details.Emp_Id = @p_Emp_Id
+	GROUP BY Emp_First_Name, Salary.Emp_Salary
+	HAVING AVG(Salary.Emp_Salary) = Salary.Emp_Salary
+
+GO
